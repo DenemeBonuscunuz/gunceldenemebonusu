@@ -1,5 +1,5 @@
 function doGet() {
-  var sheet = SpreadsheetApp.openById('SHEET_ID_HERE').getSheetByName('GIFLER');
+  var sheet = SpreadsheetApp.openById('1eb9B9j7S0bUMg53fhPoMYfOFa6tpsb_Y8WAV6eRKKjw').getSheetByName('Sheet1');
   var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getValues();
 
   var cardsHtml = data.map(function(row, i) {
