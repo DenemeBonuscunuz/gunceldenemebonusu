@@ -1,0 +1,128 @@
+function doGet() {
+  var sheet = SpreadsheetApp.openById('SHEET_ID_HERE').getSheetByName('GIFLER');
+  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getValues();
+
+  var cardsHtml = data.map(function(row, i) {
+    var title = row[0];
+    var desc = row[1];
+    var url = row[2];
+
+    return `
+      <div class="card" itemscope itemtype="https://schema.org/Offer">
+        <meta itemprop="url" content="${url}">
+        <img src="${url}" alt="${title}" itemprop="image">
+        <h2 itemprop="name">${title}</h2>
+        <p itemprop="description">${desc}</p>
+        <a class="btn" href="${url}" target="_blank" itemprop="url">Detay</a>
+      </div>
+    `;
+  }).join("");
+
+  var html = `
+    <!DOCTYPE html>
+    <html lang="tr">
+    <head>
+      <meta charset="UTF-8">
+      <title>Bonus Galerisi - En Güncel 100K Bonuslar</title>
+      <meta name="description" content="Güncel deneme bonuslarını, promosyon tekliflerini ve kampanyaları burada keşfedin. Sosyal medyada paylaşılabilir bonus kartları!">
+      <meta name="keywords" content="bonus galerisi, deneme bonusu, bahis promosyonları, bedava bonus, sosyal medya kartı">
+
+      <!-- Google SEO için Schema -->
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+          ${data.map(function(row, i) {
+            return `{
+              "@type": "ListItem",
+              "position": ${i + 1},
+              "url": "${row[2]}"
+            }`;
+          }).join(",")}
+        ]
+      }
+      </script>
+
+      <!-- Open Graph (Facebook, LinkedIn) -->
+      <meta property="og:title" content="100K Deneme Bonusları | Bonus Galerisi">
+      <meta property="og:description" content="En güncel promosyon ve bonus tekliflerini keşfedin. Tıklayın, kazanın!">
+      <meta property="og:image" content="${data[0][2]}">
+      <meta property="og:url" content="https://script.google.com/macros/s/XXXXXX/exec">
+      <meta property="og:type" content="website">
+
+      <!-- Twitter Card -->
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:title" content="100K Deneme Bonusları | Bonus Galerisi">
+      <meta name="twitter:description" content="En güncel promosyon tekliflerini görüntüle.">
+      <meta name="twitter:image" content="${data[0][2]}">
+
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body {
+          background-color: #111;
+          font-family: 'Segoe UI', sans-serif;
+          color: white;
+          margin: 0;
+          padding: 20px;
+        }
+        h1 {
+          text-align: center;
+          color: #ff9800;
+          margin-bottom: 30px;
+        }
+        .container {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 20px;
+        }
+        .card {
+          background: #1e1e1e;
+          border-radius: 12px;
+          overflow: hidden;
+          padding: 20px;
+          text-align: center;
+          box-shadow: 0 0 10px rgba(255, 152, 0, 0.3);
+          transition: transform 0.3s;
+        }
+        .card:hover {
+          transform: translateY(-5px);
+        }
+        .card img {
+          width: 100%;
+          border-radius: 8px;
+        }
+        .card h2 {
+          margin: 15px 0 10px;
+          color: #ffb74d;
+        }
+        .card p {
+          font-size: 14px;
+          color: #ccc;
+        }
+        .btn {
+          display: inline-block;
+          margin-top: 10px;
+          padding: 10px 20px;
+          background: #ff9800;
+          color: black;
+          text-decoration: none;
+          border-radius: 8px;
+          font-weight: bold;
+        }
+        .btn:hover {
+          background: #ffa726;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>🎁 Bonus Galerisi</h1>
+      <div class="container">
+        ${cardsHtml}
+      </div>
+    </body>
+    </html>
+  `;
+
+  return HtmlService.createHtmlOutput(html).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
